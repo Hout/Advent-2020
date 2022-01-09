@@ -3,7 +3,7 @@ import numpy as np
 import numpy.typing as npt
 from itertools import product
 
-data = np.array([list(line) for line in open("p11a.txt").read().strip().split("\n")])
+data = np.array([list(line) for line in open("p11b.txt").read().strip().split("\n")])
 
 puzzle_part = 2
 
