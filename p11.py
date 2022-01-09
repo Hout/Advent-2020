@@ -30,10 +30,14 @@ def get_occupied_seats(data: npt.ArrayLike, r: int, c: int, max_distance=None) -
                 or (abs(cr - r) <= max_distance and abs(cc - c) <= max_distance)
             )
         ):
+            if data[cr, cc] == "L":
+                break
             if data[cr, cc] == "#":
                 occupied += 1
                 break
+            # field is "."
             cr, cc = (cr, cc) + direction
+
     return occupied
 
 
@@ -52,10 +56,10 @@ def cycle(
                     new_data[r, c] = seat
                     continue
 
-                occupied = get_occupied_seats(old_data, r, c, max_distance)
-                if seat == "L" and occupied == 0:
+                occupied_seats = get_occupied_seats(old_data, r, c, max_distance)
+                if seat == "L" and occupied_seats == 0:
                     new_data[r, c] = "#"
-                elif seat == "#" and occupied >= required_occupied_seats:
+                elif seat == "#" and occupied_seats >= required_occupied_seats:
                     new_data[r, c] = "L"
                 else:
                     new_data[r, c] = seat
