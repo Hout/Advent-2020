@@ -1,6 +1,8 @@
 from typing import Set, Tuple, List, Sequence
 from itertools import product
 
+puzzle_part = 2
+
 
 class Space:
     def __init__(self, dimensions: int) -> None:
@@ -95,25 +97,50 @@ class Space:
         return result
 
 
-lines = open("p17b.txt").read().strip().split("\n")
-space = Space(3)
-for row, line in enumerate(lines):
-    for col, ch in enumerate(line):
-        if ch == "#":
-            space[row, col, 0] = True
-print(space)
+if puzzle_part == 1:
+    lines = open("p17b.txt").read().strip().split("\n")
+    space = Space(3)
+    for row, line in enumerate(lines):
+        for col, ch in enumerate(line):
+            if ch == "#":
+                space[row, col, 0] = True
+    print(space)
 
-for cycle in range(6):
-    new_space = Space(3)
-    for coords in space.indices(padding=1):
-        neighbours = space.neighbours(coords)
-        if space[coords]:
-            if neighbours in {2, 3}:
-                new_space[coords] = True
-        else:
-            if neighbours == 3:
-                new_space[coords] = True
-    space = new_space
-    print(space, end="\n\n")
+    for cycle in range(6):
+        new_space = Space(3)
+        for coords in space.indices(padding=1):
+            neighbours = space.neighbours(coords)
+            if space[coords]:
+                if neighbours in {2, 3}:
+                    new_space[coords] = True
+            else:
+                if neighbours == 3:
+                    new_space[coords] = True
+        space = new_space
+        print(space, end="\n\n")
 
-print(space.active_count())
+    print(space.active_count())
+
+if puzzle_part == 2:
+    lines = open("p17b.txt").read().strip().split("\n")
+    space = Space(4)
+    for row, line in enumerate(lines):
+        for col, ch in enumerate(line):
+            if ch == "#":
+                space[row, col, 0, 0] = True
+    print(space)
+
+    for cycle in range(6):
+        new_space = Space(4)
+        for coords in space.indices(padding=1):
+            neighbours = space.neighbours(coords)
+            if space[coords]:
+                if neighbours in {2, 3}:
+                    new_space[coords] = True
+            else:
+                if neighbours == 3:
+                    new_space[coords] = True
+        space = new_space
+        print(space, end="\n\n")
+
+    print(space.active_count())
