@@ -1,8 +1,9 @@
 from itertools import permutations
-import numbers
 import sys
 from typing import List, Tuple, TypeAlias, Iterable
 from itertools import permutations
+from math import prod
+from collections import defaultdict
 
 input_source = "p16b.txt"
 
@@ -74,11 +75,49 @@ def get_unmatching_values(ticket: Ticket, fields: Fields) -> List[int]:
 
 
 fields, ticket, nearby_tickets = get_values()
-not_matching = []
-for nearby_ticket in nearby_tickets:
-    unmatching_values = get_unmatching_values(nearby_ticket, fields)
-    if unmatching_values:
-        not_matching.append(unmatching_values)
 
+# part 1
+not_matching = [
+    values
+    for values in [
+        get_unmatching_values(nearby_ticket, fields) for nearby_ticket in nearby_tickets
+    ]
+    if values
+]
 result = sum(sum(m) for m in not_matching)
 print(result)
+
+# part 2
+valid_tickets = [t for t in nearby_tickets if not get_unmatching_values(t, fields)]
+
+# transpose
+columns = [[ticket[i] for ticket in valid_tickets] for i in range(len(ticket))]
+
+# find fields per column
+matching_columns = defaultdict(set)
+for column_index, column in enumerate(columns):
+    for field_name, field_ranges in fields:
+        if all(
+            [
+                any([column_value in field_range for field_range in field_ranges])
+                for column_value in column
+            ]
+        ):
+            matching_columns[column_index].add(field_name)
+
+
+# find one solution
+solution = {}
+while sum(len(v) for v in matching_columns.values()) > 0:
+    # check for a lonely field in the matching columns
+    loner_index = [k for k, v in matching_columns.items() if len(v) == 1][0]
+    loner_field_name = list(matching_columns[loner_index])[0]
+    solution[loner_index] = loner_field_name
+
+    # remove field from all matching_columns to find further loners
+    for field_set in matching_columns.values():
+        field_set.discard(loner_field_name)
+
+print(
+    prod([tv for ti, tv in enumerate(ticket) if solution[ti].startswith("departure")])
+)
